@@ -85,17 +85,17 @@ def main(reconstruction_parameters):
     enforceResolutionCircle                 = reconstruction_parameters.enforceResolutionCircle
     permitMultipleGridding                  = reconstruction_parameters.permitMultipleGridding
 	
-    print('oversamplingRatio',oversamplingRatio)
-    print('interpolationCutoffDistance',interpolationCutoffDistance)
-    print('resolutionExtensionSuppressionState',resolutionExtensionSuppressionState)
-    print('methodState',methodState)
-    print('calculateRFree',calculateRFree)
-    print('useDefaultSupport',useDefaultSupport)
-    print('use_positivity',use_positivity)
-    print('use_support',use_support)
-    print('gridding_method',gridding_method)	
-    print('enforceResolutionCircle',enforceResolutionCircle)
-    print('permitMultipleGridding',permitMultipleGridding)
+    print('oversamplingRatio = %.2f'%(oversamplingRatio))
+    print('interpolationCutoffDistance = %.2f'%(interpolationCutoffDistance))
+    print('resolutionExtensionSuppressionState = %d'%(resolutionExtensionSuppressionState))
+    print('methodState = %d'%(methodState))
+    print('calculateRFree = %r'%(calculateRFree))
+    print('useDefaultSupport = %r'%(useDefaultSupport))
+    print('use_positivity = %r'%(use_positivity))
+    print('use_support = %r'%(use_support))
+    print('gridding_method = ' + gridding_method)	
+    print('enforceResolutionCircle = %r'%(enforceResolutionCircle))
+    print('permitMultipleGridding = %r'%(permitMultipleGridding))
     
 
     if reconstruction_parameters.isInitialObjectDefined:
@@ -211,7 +211,7 @@ def main(reconstruction_parameters):
         constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
     
     #savemat('measuredK.mat',{'measuredK':measuredK})
-    measuredK = genfire.fileio.loadProjections('measuredK.mat')
+    #measuredK = genfire.fileio.loadProjections('measuredK.mat')
     #reconstructionOutputs = genfire.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support)
     reconstructionOutputs = genfire.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK), (resolutionIndicators), constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support, methodState)
 
@@ -238,51 +238,141 @@ elif __name__ == "__main__":
                                 "-t" :  "interpolationCutoffDistance",
                                 "-d" :  "displayFigure",
                                 "-rf":  "calculateRFree",
-                                "-m" :  "method"
+                                "-m" :  "methodState"
                                 }
         print (sys.argv[:])
         if len(sys.argv)%2==0:
             raise Exception("Number of input options and input arguments does not match!")
         for argumentNum in range(1,len(sys.argv),2):
-            print (inputArgumentOptions[sys.argv[argumentNum]])
-            print  (sys.argv[argumentNum+1])
+            #print (inputArgumentOptions[sys.argv[argumentNum]])
+            #print  (sys.argv[argumentNum+1])
             print (inputArgumentOptions[sys.argv[argumentNum]] + "=" + sys.argv[argumentNum+1])
 
 
             exec(inputArgumentOptions[sys.argv[argumentNum]] + "= '" + sys.argv[argumentNum+1] +"'")
             print("Setting argument %s from option %s equal to GENFIRE parameter %s " % (sys.argv[argumentNum+1],sys.argv[argumentNum], inputArgumentOptions[sys.argv[argumentNum]] ))
 
-        numIterations = int(numIterations)
+        # numIterations = int(numIterations)
         # displayFigure = bool(displayFigure)
-        doYouWantToDisplayFigure = bool(displayFigure)
+        # doYouWantToDisplayFigure = bool(displayFigure)
+        # displayFigure = genfire.reconstruct.DisplayFigure()
+        # displayFigure.DisplayFigureON = doYouWantToDisplayFigure
+        # oversamplingRatio = float(oversamplingRatio)
+        # resolutionExtensionSuppressionState = int(resolutionExtensionSuppressionState)
+        # calculateRFree = bool(calculateRFree)
+        # methodState = int(methodState)
+
+        try:
+            numIterations = int(numIterations)
+        except NameError as e:
+            numIterations = 100
+		#end
+
+        try:
+            doYouWantToDisplayFigure = bool(displayFigure)
+        except NameError as e:
+           doYouWantToDisplayFigure = True
+		#end
         displayFigure = genfire.reconstruct.DisplayFigure()
         displayFigure.DisplayFigureON = doYouWantToDisplayFigure
-        oversamplingRatio = float(oversamplingRatio)
-        resolutionExtensionSuppressionState = int(resolutionExtensionSuppressionState)
-        calculateRFree = bool(calculateRFree)
-        method = int(method)
+		
         try:
-            main(filename_projections,
-                 filename_angles,
-                 filename_support,
-                 filename_results,
-                 numIterations,
-                 oversamplingRatio,
-                 interpolationCutoffDistance,
-                 resolutionExtensionSuppressionState,
-                 method,
-                 displayFigure,
-                 calculateRFree,
-                 filename_initialObject)
+            oversamplingRatio = float(oversamplingRatio)
+        except NameError as e:
+            oversamplingRatio = 3;
+        #end
+		
+        try:
+            resolutionExtensionSuppressionState = int(resolutionExtensionSuppressionState)
+        except NameError as e:
+            resolutionExtensionSuppressionState = 2
+        #end
+
+        try:
+            calculateRFree = bool(calculateRFree)
+        except NameError as e:
+            calculateRFree = True
+        #end
+		
+        try:
+            methodState = int(methodState)
+        except NameError as e:
+            methodState = 1
+        #end        
+
+        try:
+            filename_projections
+        except NameError as e:
+            filename_projections = 'projections.mrc'
+        #end  
+
+        try:
+            filename_angles
+        except NameError as e:
+            filename_angles = 'angles.txt'
+        #end  
+		
+        try:
+            filename_support
+        except NameError as e:
+            filename_support=''
+            useDefaultSupport = True
+        #end  
+
+        try:
+            filename_results
+        except NameError as e:
+            filename_results='GENFIRE_rec.mrc'
+        #end 
+
+        try:
+            interpolationCutoffDistance = float(interpolationCutoffDistance)
+        except NameError as e:
+            interpolationCutoffDistance = 0.7
+        #end  		
+        reconstruction_parameters                                      = ReconstructionParameters()
+        reconstruction_parameters.projections                          = filename_projections
+        reconstruction_parameters.eulerAngles                          = filename_angles
+        reconstruction_parameters.support                              = filename_support
+        reconstruction_parameters.interpolationCutoffDistance          = interpolationCutoffDistance
+        reconstruction_parameters.numIterations                        = numIterations
+        reconstruction_parameters.oversamplingRatio                    = oversamplingRatio
+        reconstruction_parameters.displayFigure                        = displayFigure
+        reconstruction_parameters.calculateRfree                       = calculateRFree
+        reconstruction_parameters.resolutionExtensionSuppressionState  = resolutionExtensionSuppressionState
+        reconstruction_parameters.methodState                          = methodState		
+        reconstruction_parameters.useDefaultSupport                    = useDefaultSupport
+        if os.path.isfile(filename_results): # If a valid initial object was provided, use it
+            reconstruction_parameters.initialObject                    = filename_results
+
+        try:
+            main(reconstruction_parameters)
         except (NameError, IOError):
-             main(filename_projections,
-                  filename_angles,
-                  filename_support,
-                  filename_results,
-                  numIterations,
-                  oversamplingRatio,
-                  interpolationCutoffDistance,
-                  resolutionExtensionSuppressionState,
-                  method,
-                  displayFigure,
-                  calculateRFree)
+            main(reconstruction_parameters)
+		#end
+		
+        # try:
+            # main(filename_projections,
+                 # filename_angles,
+                 # filename_support,
+                 # filename_results,
+                 # numIterations,
+                 # oversamplingRatio,
+                 # interpolationCutoffDistance,
+                 # resolutionExtensionSuppressionState,
+                 # method,
+                 # displayFigure,
+                 # calculateRFree,
+                 # filename_initialObject)
+        # except (NameError, IOError):
+             # main(filename_projections,
+                  # filename_angles,
+                  # filename_support,
+                  # filename_results,
+                  # numIterations,
+                  # oversamplingRatio,
+                  # interpolationCutoffDistance,
+                  # resolutionExtensionSuppressionState,
+                  # method,
+                  # displayFigure,
+                  # calculateRFree)

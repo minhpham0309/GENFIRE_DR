@@ -46,13 +46,13 @@ if __name__ != "__main__":
          University of California, Los Angeles
          Copyright 2015-2016. All rights reserved.
         """
+        print(' ')
         import time
         t0 = time.time()
         if verbose:
             print("Reconstruction starting")
         bestErr = 1e30 #initialize error
 
-        numIterations=100;
         #initialize arrays for error metrics
         Rfree_complex = np.ones(numIterations)*-1 #
         errK = np.zeros(numIterations)
@@ -859,12 +859,12 @@ class ReconstructionParameters():
         self.projections                         = ""
         self.eulerAngles                         = ""
         self.support                             = ""
-        self.resolutionExtensionSuppressionState = 1 #1 for resolution extension/suppression, 2 for off, 3 for just extension
+        self.resolutionExtensionSuppressionState = 2 #1 for resolution extension/suppression, 2 for off, 3 for just extension
         self.methodState = 1 #1 for ER, 2 for DR
         self.numIterations                       = 100
         self.displayFigure                       = DisplayFigure()
         self.oversamplingRatio                   = 3
-        self.interpolationCutoffDistance         = 0.5
+        self.interpolationCutoffDistance         = 0.7
         self.isInitialObjectDefined              = False
         self.resultsFilename                     = os.path.join(os.getcwd(), 'results.mrc')
         self.useDefaultSupport                   = True
@@ -996,7 +996,7 @@ class GenfireReconstructor():
     """
     def __init__(self, projections="", eulerAngles="", support="", initialObject=None,
                  resultsFilename=os.path.join(os.getcwd(), 'results.mrc'), resolutionExtensionSuppressionState=1, 
-                 numIterations=100, oversamplingRatio=3, interpolationCutoffDistance=0.5, useDefaultSupport=True,
+                 numIterations=100, oversamplingRatio=3, interpolationCutoffDistance=0.7, useDefaultSupport=True,
                  calculateRfree=True, constraintPositivity=True, constraintSupport=True, griddingMethod="FFT",
                  enforceResolutionCircle=True, permitMultipleGridding=True, methodState=1, verbose=True):
 

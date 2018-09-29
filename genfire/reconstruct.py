@@ -277,16 +277,16 @@ if __name__ != "__main__":
             initialObject = 2*u_K - u
 
 			# method1
-            # initialObject = np.real(initialObject)
-            # index_neg = (initialObject<0) | (support==0);            
-            # initialObject[index_neg]=0;
+            initialObject = np.real(initialObject)
+            index_neg = (initialObject<0) | (support==0);            
+            initialObject[index_neg]=0;
 
 			#method 2
-            object_temp = np.copy(initialObject);
-            index_re = (support) & (np.real(object_temp)>0)
-            object_temp[index_re] -= np.real(object_temp[index_re])
-            initialObject = initialObject - object_temp
-            initialObject = np.real(initialObject)
+            # object_temp = np.copy(initialObject);
+            # index_re = (support) & (np.real(object_temp)>0)
+            # object_temp[index_re] -= np.real(object_temp[index_re])
+            # initialObject = initialObject - object_temp
+            # initialObject = np.real(initialObject)
 			
             u = u + initialObject - u_K
 			

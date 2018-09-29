@@ -46,6 +46,9 @@ if __name__ != "__main__":
          University of California, Los Angeles
          Copyright 2015-2016. All rights reserved.
         """
+        support = support.astype(bool)
+        measuredK = measuredK.astype('complex64')
+		
         print(' ')
         import time
         t0 = time.time()
@@ -272,9 +275,18 @@ if __name__ != "__main__":
             k[constraintInd_complex] = dt*k[constraintInd_complex] + (1-dt)*measuredK[constraintInd_complex]
             u_K = ifftn(k)
             initialObject = 2*u_K - u
+
+			# method1
+            # initialObject = np.real(initialObject)
+            # index_neg = (initialObject<0) | (support==0);            
+            # initialObject[index_neg]=0;
+
+			#method 2
+            object_temp = np.copy(initialObject);
+            index_re = (support) & (np.real(object_temp)>0)
+            object_temp[index_re] -= np.real(object_temp[index_re])
+            initialObject = initialObject - object_temp
             initialObject = np.real(initialObject)
-            index_neg = (initialObject<0) | (support==0);            
-            initialObject[index_neg]=0;
 			
             u = u + initialObject - u_K
 			

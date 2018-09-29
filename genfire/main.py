@@ -209,9 +209,9 @@ def main(reconstruction_parameters):
     else:
         print("Warning! Input resolutionExtensionSuppressionState does not match an available option. Deactivating dynamic constraint enforcement and continuing.\n")
         constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
-    
+    #support = support.astype(bool)
     #savemat('measuredK.mat',{'measuredK':measuredK})
-    #measuredK = genfire.fileio.loadProjections('measuredK.mat')
+    measuredK = genfire.fileio.loadProjections('measuredK.mat')
     #reconstructionOutputs = genfire.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support)
     reconstructionOutputs = genfire.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK), (resolutionIndicators), constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support, methodState)
 

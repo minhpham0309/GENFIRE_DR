@@ -151,7 +151,7 @@ def main(reconstruction_parameters):
     # the grid is assembled with the origin at the geometric center of the array, but for efficiency in the
     # iterative algorithm the origin is shifted to array position [0,0,0] to avoid unnecessary fftshift calls
     measuredK = np.fft.ifftshift(measuredK)
-    measuredK = measuredK*(1 + 0.4*(np.random.normal(0,1,(np.shape(measuredK))) + 1j*np.random.normal(0,1,(np.shape(measuredK))) ))
+    #measuredK = measuredK*(1 + 0.4*(np.random.normal(0,1,(np.shape(measuredK))) + 1j*np.random.normal(0,1,(np.shape(measuredK))) ))
 
     # create a map of the spatial frequency to be used to control resolution extension/suppression behavior
     K_indices = genfire.utility.generateKspaceIndices(support)
@@ -211,7 +211,11 @@ def main(reconstruction_parameters):
         constraintEnforcementDelayIndicators = np.array([-999, -999, -999, -999])
     #support = support.astype(bool)
     #savemat('measuredK.mat',{'measuredK':measuredK})
-    measuredK = genfire.fileio.loadProjections('measuredK.mat')
+    #measuredK = genfire.fileio.loadProjections('measuredK.mat')
+	
+    support = support.astype(bool)
+    measuredK = measuredK.astype('complex64')
+    resolutionIndicators = resolutionIndicators.astype(bool)
     #reconstructionOutputs = genfire.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support)
     reconstructionOutputs = genfire.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK), (resolutionIndicators), constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support, methodState)
 

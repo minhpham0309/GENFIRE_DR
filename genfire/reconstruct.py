@@ -15,6 +15,7 @@ from __future__ import division
 import matplotlib
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import os
 import scipy.io
 import time
@@ -46,8 +47,6 @@ if __name__ != "__main__":
          University of California, Los Angeles
          Copyright 2015-2016. All rights reserved.
         """
-        support = support.astype(bool)
-        measuredK = measuredK.astype('complex64')
 		
         print(' ')
         import time
@@ -69,7 +68,7 @@ if __name__ != "__main__":
             Rfree_complex_bybin = np.zeros((np.shape(R_freeInd_complex)[2], numIterations),dtype=float)
             Rfree_complex_total = np.zeros(numIterations,dtype=float)
 
-        if displayFigure.DisplayFigureON: #setup some indices for plotting.
+        if displayFigure.DisplayFigureON: #setup some indices for plotting.            
             n_half_x = int(dims[0]/2) #this assumes even-sized arrays
             n_half_y = int(dims[1]/2)
             n_half_z = int(dims[2]/2)
@@ -77,6 +76,7 @@ if __name__ != "__main__":
             half_window_x = displayFigure.reconstructionDisplayWindowSize[0]//2
             half_window_y = displayFigure.reconstructionDisplayWindowSize[1]//2
             half_window_z = displayFigure.reconstructionDisplayWindowSize[2]//2
+            half_size = [n_half_x,n_half_y,n_half_z,half_window_x,half_window_y,half_window_z]
 
         #setup output dict
         if R_freeInd_complex:
@@ -92,7 +92,9 @@ if __name__ != "__main__":
         constraintEnforcementDelayIndicators = constraintEnforcementDelayIndicators[uniqueIndices]
         currentCutoffNum = 0
 		
-		# ALGORITHMS: ER or DR
+        ##############################################################################
+		#############------- ALTERNATING PROJECTION ALGORITHMS---------##################
+        ##############################################################################"""
         if method==1:
           print('Starting ALTERNATING PROJECTION ALGORITHM')
 		  # ALTERNATING PROJECTION (ERROR REDUCTION) ALGORITHM
@@ -162,69 +164,22 @@ if __name__ != "__main__":
                     if verbose:
                         print("n_half_x = ", n_half_x)
                         print("half_window_y = ", half_window_y)
-                    plt.figure(1000)
-                    plt.subplot(233)
-                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
-                    plt.title("central YZ slice")
-
-                    plt.subplot(232)
-                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
-                    plt.title("central XZ slice")
-
-                    plt.subplot(231)
-                    plt.title("central XY slice")
-                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
-
-                    plt.subplot(236)
-                    plt.title("YZ projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
-
-                    plt.subplot(235)
-                    plt.title("XZ projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
-
-                    plt.subplot(234)
-                    plt.title("XY projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
-                    plt.get_current_fig_manager().window.setGeometry(25,25,400, 400)
-                    plt.draw()
-
-                    plt.figure(2)
-                    plt.get_current_fig_manager().window.setGeometry(25,450,400, 400)
-                    plt.plot(range(0,numIterations),errK)
-                    plt.title("K-space Error vs Iteration Number")
-                    plt.xlabel("Spatial Frequency (% of Nyquist)")
-                    plt.ylabel('Reciprocal Space Error')
-                    plt.draw()
-
-                    if R_freeInd_complex:
-                        plt.figure(3)
-                        mngr = plt.get_current_fig_manager()
-                        mngr.window.setGeometry(450,25,400, 400)
-                        plt.plot(range(0,numIterations),Rfree_complex_total)
-                        plt.title("Mean R-free Value vs Iteration Number")
-                        plt.xlabel("Iteration Num")
-                        plt.ylabel('Mean R-free')
-                        plt.draw()
-
-                        plt.figure(4)
-                        mngr = plt.get_current_fig_manager()
-                        mngr.window.setGeometry(450,450,400, 400)
-                        X = np.linspace(0,1,np.shape(Rfree_complex_bybin)[0])
-                        plt.plot(X, Rfree_complex_bybin[:,iterationNum-1])
-                        plt.title("Current Rfree Value vs Spatial Frequency")
-                        plt.xlabel("Spatial Frequency (% of Nyquist)")
-                        plt.ylabel('Rfree')
-                        plt.draw()
-
-                    if iterationNum<numIterations:
-                        ptime=1
-                    else:
-                        ptime=100
-                    plt.pause(ptime) #forces display to update
-					
-        else: # DR ALGORITHM
-		  # ALGORITHM: u = u + P_O(2P_K - I)u - P_K*u
+                    plot_result(initialObject,half_size,numIterations,iterationNum,errK,R_freeInd_complex,Rfree_complex_bybin,Rfree_complex_total)
+                #end plot
+                                
+        ##################################################################################
+        #######################------DR ALGORITHM-----####################################
+        ##############--------ALGORITHM: u = u + P_O(2P_K - I)u - P_K*u------#############
+        ##################################################################################"""
+        else:
+          d1,d2,d3 = np.shape(initialObject)
+          XX,YY,ZZ = np.meshgrid(np.arange(d1),np.arange(d1),np.arange(d1))
+          x_cen = d1//2
+          y_cen = d2//2
+          z_cen = d3//2
+          R2 = (XX-x_cen)**2 + (YY-y_cen)**2 + (ZZ-z_cen)**2
+          kernel = np.exp(-R2/500**2)
+          
           print('Starting DOUGLAS RACHFORD ALGORITHM')		  
           k = fftn(initialObject)
           u = initialObject
@@ -280,84 +235,28 @@ if __name__ != "__main__":
             initialObject = np.real(initialObject)
             index_neg = (initialObject<0) | (support==0);            
             initialObject[index_neg]=0;
+            #F_obj = np.fft.fftn(initialObject) * kernel
+            #initialObject = np.real(np.fft.ifftn(F_obj))
 
 			#method 2
             # object_temp = np.copy(initialObject);
             # index_re = (support) & (np.real(object_temp)>0)
             # object_temp[index_re] -= np.real(object_temp[index_re])
+            # object_temp *= kernel
             # initialObject = initialObject - object_temp
             # initialObject = np.real(initialObject)
 			
             u = u + initialObject - u_K
 			
-
             #update display
             if displayFigure.DisplayFigureON:
                 if iterationNum % displayFigure.displayFrequency == 0:
                     if verbose:
                         print("n_half_x = ", n_half_x)
                         print("half_window_y = ", half_window_y)
-                    plt.figure(1000)
-                    plt.subplot(233)
-                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
-                    plt.title("central YZ slice")
-
-                    plt.subplot(232)
-                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
-                    plt.title("central XZ slice")
-
-                    plt.subplot(231)
-                    plt.title("central XY slice")
-                    plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
-
-                    plt.subplot(236)
-                    plt.title("YZ projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
-
-                    plt.subplot(235)
-                    plt.title("XZ projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
-
-                    plt.subplot(234)
-                    plt.title("XY projection")
-                    plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
-                    plt.get_current_fig_manager().window.setGeometry(25,25,400, 400)
-                    plt.draw()
-
-                    plt.figure(2)
-                    plt.get_current_fig_manager().window.setGeometry(25,450,400, 400)
-                    plt.plot(range(0,numIterations),errK)
-                    plt.title("K-space Error vs Iteration Number")
-                    plt.xlabel("Spatial Frequency (% of Nyquist)")
-                    plt.ylabel('Reciprocal Space Error')
-                    plt.draw()
-
-                    if R_freeInd_complex:
-                        plt.figure(3)
-                        mngr = plt.get_current_fig_manager()
-                        mngr.window.setGeometry(450,25,400, 400)
-                        plt.plot(range(0,numIterations),Rfree_complex_total)
-                        plt.title("Mean R-free Value vs Iteration Number")
-                        plt.xlabel("Iteration Num")
-                        plt.ylabel('Mean R-free')
-                        plt.draw()
-
-                        plt.figure(4)
-                        mngr = plt.get_current_fig_manager()
-                        mngr.window.setGeometry(450,450,400, 400)
-                        X = np.linspace(0,1,np.shape(Rfree_complex_bybin)[0])
-                        plt.plot(X, Rfree_complex_bybin[:,iterationNum-1])
-                        plt.title("Current Rfree Value vs Spatial Frequency")
-                        plt.xlabel("Spatial Frequency (% of Nyquist)")
-                        plt.ylabel('Rfree')
-                        plt.draw()
-
-                    if iterationNum<numIterations:
-                        ptime=1
-                    else:
-                        ptime=100
-                    plt.pause(ptime) #forces display to update
-		#end methods
+                    plot_result(initialObject,half_size,numIterations,iterationNum,errK,R_freeInd_complex,Rfree_complex_bybin,Rfree_complex_total)
+            #end plot_result
+        #end methods
 
         outputs['errK'] = errK
         if R_freeInd_complex:
@@ -369,6 +268,70 @@ if __name__ != "__main__":
         return outputs
 
 
+    def plot_result(initialObject,half_size,numIterations,iterationNum,errK,R_freeInd_complex,Rfree_complex_bybin,Rfree_complex_total):
+        n_half_x,n_half_y,n_half_z,half_window_x,half_window_y,half_window_z = half_size
+        plt.figure(1000)
+        plt.subplot(233)
+        plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]),cmap=cm.jet)
+        plt.title("central YZ slice")
+        plt.subplot(232)
+        plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]),cmap=cm.jet)
+        plt.title("central XZ slice")
+
+        plt.subplot(231)
+        plt.title("central XY slice")
+        plt.imshow(np.squeeze(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]),cmap=cm.jet)
+
+        plt.subplot(236)
+        plt.title("YZ projection")
+        plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)),cmap=cm.jet)
+
+        plt.subplot(235)
+        plt.title("XZ projection")
+        plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)),cmap=cm.jet)
+
+        plt.subplot(234)
+        plt.title("XY projection")
+        plt.imshow(np.squeeze(np.sum(np.fft.fftshift(initialObject)[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)),cmap=cm.jet)
+        plt.get_current_fig_manager().window.setGeometry(25,25,400, 400)
+        plt.draw()
+
+        plt.figure(2)
+        plt.get_current_fig_manager().window.setGeometry(25,450,400, 400)
+        plt.plot(range(0,numIterations),errK)
+        plt.title("K-space Error vs Iteration Number")
+        plt.xlabel("Spatial Frequency (% of Nyquist)")
+        plt.ylabel('Reciprocal Space Error')
+        plt.draw()
+
+        if R_freeInd_complex:
+            plt.figure(3)
+            mngr = plt.get_current_fig_manager()
+            mngr.window.setGeometry(450,25,400, 400)
+            plt.plot(range(0,numIterations),Rfree_complex_total)
+            plt.title("Mean R-free Value vs Iteration Number")
+            plt.xlabel("Iteration Num")
+            plt.ylabel('Mean R-free')
+            plt.draw()
+
+            plt.figure(4)
+            mngr = plt.get_current_fig_manager()
+            mngr.window.setGeometry(450,450,400, 400)
+            X = np.linspace(0,1,np.shape(Rfree_complex_bybin)[0])
+            plt.plot(X, Rfree_complex_bybin[:,iterationNum-1])
+            plt.title("Current Rfree Value vs Spatial Frequency")
+            plt.xlabel("Spatial Frequency (% of Nyquist)")
+            plt.ylabel('Rfree')
+            plt.draw()
+
+        if iterationNum<numIterations:
+            ptime=1e-5
+        else:
+            ptime=100
+        plt.pause(ptime) #forces display to update
+    #end plot_result
+
+                    
     def fillInFourierGrid(projections,angles,interpolationCutoffDistance, enforce_resolution_circle=True, permitMultipleGridding=True, verbose=True):
         """
         * fillInFourierGrid *
@@ -461,7 +424,7 @@ if __name__ != "__main__":
 
                     tmpVals = kMeasured
                     # tmpConfidenceWeights = confidenceWeights
-                    distances = np.abs(measuredX-tmpX)**2 + np.abs(measuredY-tmpY)**2 + np.abs(measuredZ-tmpZ)**2
+                    distances = np.sqrt(np.abs(measuredX-tmpX)**2 + np.abs(measuredY-tmpY)**2 + np.abs(measuredZ-tmpZ)**2)
                     tmpX+=nc
                     tmpY+=nc
                     tmpZ+=nc

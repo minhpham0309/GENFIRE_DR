@@ -13,6 +13,7 @@ Copyright 2015-2016. All rights reserved.
 from genfire.gui import VolumeSlicer_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 import matplotlib
+import matplotlib.cm as cm
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -101,19 +102,19 @@ class VolumeSlicer(QtWidgets.QMainWindow):
 
 
     def updateSliceX(self, nx):
-        self.slice1.imshow(np.squeeze(self.volume[nx, :, :]))
+        self.slice1.imshow(np.squeeze(self.volume[nx, :, :]),cmap=cm.jet)
         if self.lockColormap:
             plt.setp(plt.getp(self.slice1,'images')[0],'clim',self.clim1)
         self.canvas1.draw()
 
     def updateSliceY(self, ny):
-        self.slice2.imshow(np.squeeze(self.volume[:, ny, :]))
+        self.slice2.imshow(np.squeeze(self.volume[:, ny, :]),cmap=cm.jet)
         if self.lockColormap:
             plt.setp(plt.getp(self.slice2,'images')[0],'clim',self.clim2)
         self.canvas2.draw()
 
     def updateSliceZ(self, nz):
-        self.slice3.imshow(np.squeeze(self.volume[:, :, nz]))
+        self.slice3.imshow(np.squeeze(self.volume[:, :, nz]),cmap=cm.jet)
         if self.lockColormap:
             plt.setp(plt.getp(self.slice3,'images')[0],'clim',self.clim3)
         self.canvas3.draw()

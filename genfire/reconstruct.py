@@ -182,7 +182,7 @@ if __name__ != "__main__":
           
           print('Starting DOUGLAS RACHFORD ALGORITHM')		  
           k = fftn(initialObject)
-          u = initialObject
+          u = np.copy(initialObject)
           for iterationNum in range(1, numIterations+1): #iterations are counted started from 1
             dt = 0.1 #+ 0.3*(1-np.sqrt((numIterations-iterationNum)/numIterations)) 
 

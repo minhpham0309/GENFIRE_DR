@@ -13,6 +13,7 @@ Copyright 2015-2016. All rights reserved.
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import matplotlib
+import matplotlib.cm as cm
 matplotlib.use("Qt5Agg")
 from genfire.gui import ProjectionCalculator, VolumeSlicer, GENFIRE_MainWindow
 import os
@@ -348,28 +349,28 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
             half_window_z = reconstructionDisplayWindowSize//2
             plt.figure()
             plt.subplot(233)
-            plt.imshow(np.squeeze(initialObject[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+            plt.imshow(np.squeeze(initialObject[n_half_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z]),cmap=cm.jet)
             plt.title("central YZ slice")
 
             plt.subplot(232)
-            plt.imshow(np.squeeze(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]))
+            plt.imshow(np.squeeze(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y, n_half_z-half_window_z:n_half_z+half_window_z]),cmap=cm.jet)
             plt.title("central XZ slice")
 
             plt.subplot(231)
             plt.title("central XY slice")
-            plt.imshow(np.squeeze(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]))
+            plt.imshow(np.squeeze(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z]),cmap=cm.jet)
 
             plt.subplot(236)
             plt.title("YZ projection")
-            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)))
+            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=0)),cmap=cm.jet)
 
             plt.subplot(235)
             plt.title("XZ projection")
-            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)))
+            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=1)),cmap=cm.jet)
 
             plt.subplot(234)
             plt.title("XY projection")
-            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)))
+            plt.imshow(np.squeeze(np.sum(initialObject[n_half_x-half_window_x:n_half_x+half_window_x, n_half_y-half_window_y:n_half_y+half_window_y, n_half_z-half_window_z:n_half_z+half_window_z], axis=2)),cmap=cm.jet)
             plt.get_current_fig_manager().window.setGeometry(25,25,600, 1200)
 
             # now load error curves if they exist

@@ -172,13 +172,13 @@ if __name__ != "__main__":
         ##############--------ALGORITHM: u = u + P_O(2P_K - I)u - P_K*u------#############
         ##################################################################################"""
         else:
-          d1,d2,d3 = np.shape(initialObject)
-          XX,YY,ZZ = np.meshgrid(np.arange(d1),np.arange(d1),np.arange(d1))
-          x_cen = d1//2
-          y_cen = d2//2
-          z_cen = d3//2
-          R2 = (XX-x_cen)**2 + (YY-y_cen)**2 + (ZZ-z_cen)**2
-          kernel = np.exp(-R2/500**2)
+          #d1,d2,d3 = np.shape(initialObject)
+          #XX,YY,ZZ = np.meshgrid(np.arange(d1),np.arange(d1),np.arange(d1))
+          #x_cen = d1//2
+          #y_cen = d2//2
+          #z_cen = d3//2
+          #R2 = (XX-x_cen)**2 + (YY-y_cen)**2 + (ZZ-z_cen)**2
+          #kernel = np.exp(-R2/500**2)
           
           print('Starting DOUGLAS RACHFORD ALGORITHM')		  
           k = fftn(initialObject)

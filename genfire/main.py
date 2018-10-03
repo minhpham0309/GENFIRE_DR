@@ -108,7 +108,7 @@ def main(reconstruction_parameters):
 
     # get dimensions of array and determine the array size after padding
     dims = np.shape(projections)
-    paddedDim = dims[0] * oversamplingRatio
+    paddedDim = int(dims[0] * oversamplingRatio)
     padding = int((paddedDim-dims[0])/2)
 
     # load the support, or generate one if none was provided

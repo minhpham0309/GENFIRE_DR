@@ -954,7 +954,8 @@ class ReconstructionParameters():
         return self.displayFigure
 
     def setOversamplingRatio(self, oversamplingRatio):
-        self.oversamplingRatio = int(oversamplingRatio)
+        #self.oversamplingRatio = int(oversamplingRatio)
+        self.oversamplingRatio = float(oversamplingRatio)
 
     def getOversamplingRatio(self):
         return self.oversamplingRatio
@@ -1083,7 +1084,7 @@ class GenfireReconstructor():
 
         # get dimensions of array and determine the array size after padding
         dims = np.shape(projections)
-        paddedDim = dims[0] * self.params.oversamplingRatio
+        paddedDim = int(dims[0] * self.params.oversamplingRatio)
         padding = int((paddedDim-dims[0])/2)
 
         # load the support, or generate one if none was provided

@@ -292,7 +292,7 @@ class ProjectionCalculator(QtWidgets.QMainWindow):
             self.setModelFilename(filename)
 
     def loadModel(self, filename):
-        self.calculationParameters.oversamplingRatio, ok = QtWidgets.QInputDialog.getInt(self, "Select Oversampling Ratio","Oversampling Ratio = ",value=3,min=1,max=10,step=1)
+        self.calculationParameters.oversamplingRatio, ok = QtWidgets.QInputDialog.getDouble(self, "Select Oversampling Ratio","Oversampling Ratio = ",value=3,min=1,max=10,decimals=1)
         from threading import Thread
         t = Thread(target=lambda:print("Loading Model..."))
         t.start()

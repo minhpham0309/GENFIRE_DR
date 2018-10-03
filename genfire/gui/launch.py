@@ -164,7 +164,7 @@ class GenfireMainWindow(QtWidgets.QMainWindow):
 
     def safeSetOversamplingRatio(self):
         try:
-            val = toInt(self.ui.lineEdit_oversamplingRatio.text())
+            val = float(self.ui.lineEdit_oversamplingRatio.text())
         except:
             val = 1
             self.ui.lineEdit_oversamplingRatio.setText('1')

@@ -185,6 +185,8 @@ if __name__ != "__main__":
           u = np.copy(initialObject)
           for iterationNum in range(1, numIterations+1): #iterations are counted started from 1
             dt = 0.1 #+ 0.3*(1-np.sqrt((numIterations-iterationNum)/numIterations)) 
+            ds = 1 - 1*(1-np.sqrt((numIterations-iterationNum)/numIterations)) 
+            ds=1;
 
             if iterationNum == iterationNumsToChangeCutoff[currentCutoffNum]: #update current Fourier constraint if appropriate
                 relevantCutoff = constraintEnforcementDelayIndicators[currentCutoffNum]
@@ -229,7 +231,7 @@ if __name__ != "__main__":
             #k[constraintInd_complex] = measuredK[constraintInd_complex]
             k[constraintInd_complex] = dt*k[constraintInd_complex] + (1-dt)*measuredK[constraintInd_complex]
             u_K = ifftn(k)
-            initialObject = 2*u_K - u
+            initialObject = (1+ds)*u_K - ds*u
 
 			# method1
             initialObject = np.real(initialObject)
@@ -246,7 +248,7 @@ if __name__ != "__main__":
             # initialObject = initialObject - object_temp
             # initialObject = np.real(initialObject)
 			
-            u = u + initialObject - u_K
+            u =  initialObject + ds*(u - u_K)
 			
             #update display
             if displayFigure.DisplayFigureON:
@@ -429,7 +431,7 @@ if __name__ != "__main__":
                     tmpY+=nc
                     tmpZ+=nc
 
-                    goodInd = (np.logical_not((tmpX > (dim1-1)) | (tmpX < 0) | (tmpY > (dim1-1)) | (tmpY < 0) | (tmpZ > (dim1-1)) | (tmpZ < 0))) & (distances <= (interpolationCutoffDistance**2))
+                    goodInd = (np.logical_not((tmpX > (dim1-1)) | (tmpX < 0) | (tmpY > (dim1-1)) | (tmpY < 0) | (tmpZ > (dim1-1)) | (tmpZ < 0))) & (distances <= (interpolationCutoffDistance))
 
                     masterInd=np.append(masterInd, np.ravel_multi_index((tmpX[goodInd].astype(np.int64), tmpY[goodInd].astype(np.int64), tmpZ[goodInd].astype(np.int64)),[dim1, dim1, dim1], order='F'))
                     masterVals=np.append(masterVals, tmpVals[goodInd])

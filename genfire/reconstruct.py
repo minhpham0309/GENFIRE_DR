@@ -110,7 +110,7 @@ if __name__ != "__main__":
                 currentCutoffNum+=1#update constraint set number
 
             #take FFT of current reconstruction
-            k = fftn(initialObject)
+            k = rfftn(initialObject)
 
             #compute error
             errK[iterationNum-1] = np.sum(abs(np.abs(k[errInd])-np.abs(measuredK[errInd])))/np.sum(abs(measuredK[errInd]))#monitor error
@@ -143,7 +143,7 @@ if __name__ != "__main__":
             #replace Fourier components with ones from measured data from the current set of constraints
             k[constraintInd_complex] = measuredK[constraintInd_complex]
             #k[constraintInd_complex] = dt*k[constraintInd_complex] + (1-dt)*measuredK[constraintInd_complex]
-            initialObject = np.real(ifftn(k))
+            initialObject = irfftn(k)
 			
 			#HIO ALGORITHM
             # if use_positivity:
@@ -181,7 +181,7 @@ if __name__ != "__main__":
           #kernel = np.exp(-R2/500**2)
           
           print('Starting DOUGLAS RACHFORD ALGORITHM')		  
-          k = fftn(initialObject)
+          k = rfftn(initialObject)
           u = np.copy(initialObject)
           for iterationNum in range(1, numIterations+1): #iterations are counted started from 1
             dt = 0.1 #+ 0.3*(1-np.sqrt((numIterations-iterationNum)/numIterations)) 
@@ -197,7 +197,7 @@ if __name__ != "__main__":
                 currentCutoffNum+=1#update constraint set number
 
             #take FFT of current reconstruction
-            k = fftn(initialObject)
+            k = rfftn(initialObject)
 
             #compute error
             errK[iterationNum-1] = np.sum(abs(np.abs(k[errInd])-np.abs(measuredK[errInd])))/np.sum(abs(measuredK[errInd]))#monitor error
@@ -230,7 +230,7 @@ if __name__ != "__main__":
             #replace Fourier components with ones from measured data from the current set of constraints
             #k[constraintInd_complex] = measuredK[constraintInd_complex]
             k[constraintInd_complex] = dt*k[constraintInd_complex] + (1-dt)*measuredK[constraintInd_complex]
-            u_K = ifftn(k)
+            u_K = irfftn(k)
             initialObject = (1+ds)*u_K - ds*u
 
 			# method1

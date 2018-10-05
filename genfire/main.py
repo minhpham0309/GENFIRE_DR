@@ -216,6 +216,8 @@ def main(reconstruction_parameters):
     support = support.astype(bool)
     measuredK = measuredK.astype('complex64')
     resolutionIndicators = resolutionIndicators.astype(bool)
+    measuredK = (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)]
+    resolutionIndicators = (resolutionIndicators)[:, :, 0:(np.shape(resolutionIndicators)[-1] // 2 + 1)]
     #reconstructionOutputs = genfire.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], (resolutionIndicators)[:, :, 0:(np.shape(measuredK)[-1] // 2 + 1)], constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support)
     reconstructionOutputs = genfire.reconstruct.reconstruct(numIterations, np.fft.fftshift(initialObject), np.fft.fftshift(support), (measuredK), (resolutionIndicators), constraintEnforcementDelayIndicators, R_freeInd_complex, R_freeVals_complex, displayFigure, use_positivity, use_support, methodState)
 
